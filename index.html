@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bench: hackathon parts planner for IIT Delhi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef0e8;--dot:#c9cdbf;--ink:#16241f;--mute:#5b6a63;--pcb:#0f4c3a;--pcb-t:#dcebe3;--line:#cfd4c6;--panel:#f8f9f4;--sig:#f2b705;--blue:#2b5ba8;--red:#c0392b;--ok:#1e7a4f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1b17;--dot:#1f332c;--ink:#e6efe9;--mute:#9db1a8;--pcb:#5fd0a0;--pcb-t:#173a2e;--line:#27413a;--panel:#14251f;--blue:#7fa8ee;--red:#ef8f82;--ok:#6fdca5;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1b17;--dot:#1f332c;--ink:#e6efe9;--mute:#9db1a8;--pcb:#5fd0a0;--pcb-t:#173a2e;--line:#27413a;--panel:#14251f;--blue:#7fa8ee;--red:#ef8f82;--ok:#6fdca5;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--bg);background-image:radial-gradient(var(--dot) 1.6px,transparent 1.7px);background-size:18px 18px;color:var(--ink);font:400 16px/1.55 "Instrument Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;margin:0;line-height:1.05}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+.logo{font:800 24px "Bricolage Grotesque",system-ui,sans-serif;display:flex;align-items:center;gap:10px}
+.logo i{width:26px;height:26px;border-radius:7px;background:var(--pcb);position:relative;display:inline-block}
+.logo i:after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--sig)}
+nav a{color:var(--ink);text-decoration:none;margin-left:20px;font-weight:500}
+nav a:hover{text-decoration:underline}
+.hero{padding:34px 0 18px}
+.hero h1{font-size:clamp(40px,7.4vw,84px);font-weight:800;letter-spacing:-.03em;max-width:12ch}
+.hero p{max-width:56ch;color:var(--mute);font-size:18px;margin:18px 0 0}
+.ideas{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:34px 0 0;border:2px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--panel)}
+.idea{all:unset;box-sizing:border-box;cursor:pointer;padding:16px 16px 18px;border-right:2px solid var(--ink);display:flex;flex-direction:column;gap:6px;min-height:132px}
+.idea:last-child{border-right:0}
+.idea:hover{background:var(--pcb-t)}
+.idea:focus-visible{outline:3px solid var(--blue);outline-offset:-3px}
+.idea[aria-pressed="true"]{background:var(--pcb);color:#fff}
+.idea .e{font-size:26px}
+.idea b{font:800 17px/1.1 "Bricolage Grotesque",system-ui,sans-serif}
+.idea span{font-size:13.5px;line-height:1.35;opacity:.85}
+.brief{display:grid;grid-template-columns:1.5fr 1fr;gap:28px;margin:26px 0 8px;align-items:start}
+.brief h2{font-size:34px}
+.brief .tag{color:var(--mute);margin:10px 0 0;max-width:60ch}
+.meter{background:var(--panel);border:2px solid var(--ink);border-radius:14px;padding:18px}
+.meter .row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.meter .row:last-of-type{border:0}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin:10px 0 4px}
+.bar>div{height:100%;background:var(--ok);width:0;transition:width .35s}
+.diff{font-weight:600}
+section.list{margin:34px 0 0}
+.shead{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.shead h2{font-size:30px}
+.shead small{color:var(--mute);font-size:15px}
+.items{background:var(--panel);border:2px solid var(--ink);border-radius:14px;overflow:hidden}
+.it{display:grid;grid-template-columns:34px 1fr auto;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line);align-items:start;cursor:pointer}
+.it:last-child{border-bottom:0}
+.it:hover{background:var(--pcb-t)}
+.it input{appearance:none;-webkit-appearance:none;width:26px;height:26px;margin:2px 0 0;border:2px solid var(--ink);border-radius:7px;background:transparent;cursor:pointer;display:grid;place-content:center}
+.it input:checked{background:var(--ok);border-color:var(--ok)}
+.it input:checked:after{content:"✓";color:#fff;font-weight:700;font-size:16px;line-height:1}
+.it input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.it h3{font:600 17px/1.25 "Instrument Sans",system-ui,sans-serif}
+.it p{margin:3px 0 0;color:var(--mute);font-size:15px}
+.it.done h3{text-decoration:line-through;text-decoration-thickness:2px;opacity:.6}
+.side{text-align:right;font-size:14px;color:var(--mute);min-width:92px}
+.side strong{display:block;color:var(--ink);font-size:16px}
+.chip{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12.5px;font-weight:600;margin-top:4px;border:1.5px solid var(--ink)}
+.chip.Essential{background:var(--sig);color:#16241f;border-color:#16241f}
+.chip.Recommended{background:var(--pcb-t);color:var(--ink)}
+.chip.Optional{border-style:dashed;color:var(--mute);border-color:var(--mute)}
+.tabs{display:flex;gap:8px;margin:14px 0}
+.tabs button{all:unset;cursor:pointer;padding:7px 14px;border:2px solid var(--ink);border-radius:99px;font-weight:600;font-size:14px}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tabs button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.total{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:16px;background:var(--pcb);color:#fff;font-weight:600}
+.total span:last-child{font:800 22px "Bricolage Grotesque",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .total,:root:not([data-theme="light"]) .idea[aria-pressed="true"]{color:#08150f}}
+:root[data-theme="dark"] .total,:root[data-theme="dark"] .idea[aria-pressed="true"]{color:#08150f}
+.empty{padding:22px;color:var(--mute)}
+.tips{margin:34px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.tips h3{font-size:20px;margin-bottom:6px}
+.tips p{margin:0;color:var(--mute);font-size:15px}
+footer{margin:44px 0 30px;color:var(--mute);font-size:14px;border-top:2px solid var(--ink);padding-top:16px}
+button.reset{all:unset;cursor:pointer;text-decoration:underline;color:var(--blue)}
+@media (max-width:860px){.ideas{grid-template-columns:1fr 1fr}.idea{border-bottom:2px solid var(--ink)}.idea:nth-child(2n){border-right:0}.idea:nth-child(5){grid-column:span 2;border-bottom:0}.brief,.tips{grid-template-columns:1fr}nav{display:none}}
+@media (max-width:480px){.it{grid-template-columns:30px 1fr}.side{grid-column:2;text-align:left}}
+body{overflow-x:hidden}
+.hero{position:relative}
+.hero:before{content:"";position:absolute;right:-30px;top:-20px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,var(--acc,var(--pcb)) 0,transparent 68%);opacity:.25;pointer-events:none}
+.hero h1,.hero p,.ideas{position:relative}
+.idea{border-top:8px solid var(--c);transition:transform .15s}
+.idea:hover{transform:translateY(-3px)}
+.idea[aria-pressed="true"]{background:var(--c);color:#fff!important}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.chips span{padding:4px 12px;border-radius:99px;background:var(--acc);color:#fff;font-size:13px;font-weight:600}
+.bar>div{background:var(--acc,var(--ok))}
+.total{background:var(--acc,var(--pcb));color:#fff!important}
+.tool{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;align-items:center}
+.tool .tabs{margin:0}
+.tool input{flex:1;min-width:150px;padding:8px 14px;border:2px solid var(--ink);border-radius:99px;background:var(--panel);color:var(--ink);font:inherit;font-size:14px}
+.tool input:focus-visible,.tool .copy:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.tool .copy{all:unset;cursor:pointer;padding:7px 14px;border-radius:99px;background:var(--ink);color:var(--bg);font-weight:600;font-size:14px}
+.it:hover{background:color-mix(in srgb,var(--acc,var(--pcb)) 14%,transparent)}
+.mode{all:unset;cursor:pointer;width:42px;height:42px;border:2px solid var(--ink);border-radius:50%;text-align:center;line-height:38px;font-size:20px}
+.mode:focus-visible,.daily button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.daily{display:grid;grid-template-columns:1fr 1fr auto;gap:22px;align-items:center;margin:26px 0 0;padding:18px 20px;border:2px dashed var(--ink);border-radius:14px;background:var(--panel)}
+.daily p{margin:4px 0 0;color:var(--mute);font-size:15px}
+.daily .btns{display:flex;flex-direction:column;gap:8px}
+.daily button{all:unset;cursor:pointer;padding:7px 14px;border-radius:99px;background:var(--ink);color:var(--bg);font-weight:600;font-size:14px;text-align:center}
+.pinbar{height:10px;border-radius:99px;background:var(--line);overflow:hidden;margin:2px 0 8px}
+.pinbar i{display:block;height:100%;background:var(--sig)}
+@media (max-width:860px){.daily{grid-template-columns:1fr}.daily .btns{flex-direction:row}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="logo"><i></i>Bench</div><nav><a href="#kit">In your kit</a><a href="#buy">To buy</a><a href="#tips">Before you go</a></nav><button class="mode" id="theme" aria-label="Switch light or dark mode">◐</button></header>
+
+<div class="hero">
+<h1>Pick an idea. Check your parts.</h1>
+<p>Five hackathon ideas for IIT Delhi, one Arduino kit. Choose your idea to see which parts you already have and what you still need to buy.</p>
+<div class="ideas" id="ideas" role="group" aria-label="Choose a project idea"></div>
+</div>
+
+<div class="daily" id="daily"></div>
+<div class="brief" id="brief"></div>
+
+<section class="list" id="kit">
+<div class="shead"><h2>In your kit</h2><small id="kitCount"></small></div>
+<div class="items" id="kitList"></div>
+</section>
+
+<section class="list" id="buy">
+<div class="shead"><h2>Still to buy</h2><small>Prices are rough Indian estimates. Check before paying.</small></div>
+<div class="tool"><div class="tabs" id="tabs" role="group" aria-label="Filter by priority"></div><input id="q" type="search" placeholder="Search parts, e.g. UV or pump" aria-label="Search parts"><button class="copy" id="copy">Copy shopping list</button></div>
+<div class="items"><div id="buyList"></div><div class="total"><span>Left to spend on shown items</span><span id="spend"></span></div></div>
+</section>
+
+<section class="list" id="tips">
+<div class="shead"><h2>Before you go</h2></div>
+<div class="tips">
+<div><h3>Run the model on your laptop</h3><p>An Arduino UNO is too small for a trained model. Send sensor readings over USB serial, classify them in Python, and send the verdict back to the LEDs.</p></div>
+<div><h3>Keep motors off the 5V pin</h3><p>Pumps and motors need their own supply, a shared ground, and a diode across the load. Use the relay or L293D from your kit.</p></div>
+<div><h3>Calibrate before demo day</h3><p>The pH sensor needs the two buffer powders, and TDS readings drift with temperature. Test every sensor at home first.</p></div>
+</div>
+</section>
+
+<footer>Your ticks are saved in this browser. <button class="reset" id="reset">Clear all ticks</button><br>Counts marked with a tilde are guesses from the kit photo, so count your own.</footer>
+</div>
+
+<script>
+// id, type(k=kit,b=buy), name, qty, price, priority, projects, purpose
+var D=[
+["uno","k","Arduino UNO R3 + USB cable","1",0,"","1234","The brain: reads sensors and drives the LEDs, LCD and servo."],
+["bb","k","Breadboard","1",0,"","12345","Connect parts without soldering."],
+["lcd","k","LCD1602 (16x2 display)","1",0,"","12345","Shows each reading and the reason for the verdict."],
+["pot","k","10K potentiometer","2",0,"","12345","Adjusts LCD contrast so the text is readable."],
+["red","k","Red LED","8",0,"","12345","Shows the red / bad verdict."],
+["yel","k","Yellow LED","2",0,"","12345","Shows the amber / doubtful verdict, and the warning blink in Kinara Kavach."],
+["grn","k","Green LED","2",0,"","12345","Shows the green / good verdict."],
+["rgb","k","RGB LED","1",0,"","3","Set to white to shine light through the milk sample."],
+["r220","k","220 ohm resistors","~10",0,"","12345","Protect each LED from burning out."],
+["r10k","k","10K ohm resistors","~10",0,"","35","Build voltage dividers so the thermistor and LDR can be read."],
+["btn","k","Push buttons (small)","4",0,"","1235","User inputs such as Yes, No, Start and Override."],
+["servo","k","Servo SG90","1",0,"","12","Lowers the barrier (Air Barrier) or closes the tap (Water Cooler)."],
+["sr04","k","HC-SR04 ultrasonic sensor","1",0,"","15","Detects a person approaching or a vehicle passing."],
+["dht","k","DHT11 temperature and humidity","1",0,"","15","Measures air temperature and humidity."],
+["therm","k","Thermistor","2",0,"","3","Measures milk temperature."],
+["ldr","k","Photoresistor (LDR)","2",0,"","35","Measures light passing through milk, or ambient light."],
+["buz","k","Active buzzer","1",0,"","15","Beeps as an alert or before moving parts start."],
+["relay","k","Relay module","1",0,"","5","Switches the water pump on and off safely."],
+["motor","k","DC motor","1",0,"","5","Acts as the sweeping broom."],
+["l293","k","L293D motor driver","1",0,"","5","Drives the motor safely from the Arduino."],
+["diode","k","1N4001 diode","2",0,"","5","Absorbs voltage spikes from the motor and pump."],
+["adxl","k","ADXL345 accelerometer","1",0,"","5","Detects if the unit is knocked or moved."],
+["batt","k","4 x AA battery holder","1",0,"","5","Separate power for the motor."],
+["mm","k","Male-to-male jumper wires","~65",0,"","12345","Wire parts together on the breadboard."],
+["mf","k","Male-to-female jumper wires","~20",0,"","12345","Connect sensor module pins to the breadboard."],
+["pms","b","PM2.5 dust sensor (PMS5003)","1",1500,"Essential","15","Measures air pollution: the key sensor for two ideas."],
+["tds","b","TDS sensor","1",450,"Essential","234","Measures dissolved solids to judge water or milk purity."],
+["turb","b","Turbidity sensor","1",500,"Essential","24","Measures how cloudy the water is."],
+["ph","b","pH sensor with BNC probe","1",1500,"Essential","234","Measures acidity of water, or how sour the milk is."],
+["buf","b","pH buffer powder (4.01 and 6.86)","1 set",150,"Essential","234","Calibrates the pH sensor so readings are correct."],
+["ds","b","DS18B20 waterproof temperature probe","1",150,"Essential","24","Accurate water temperature, better than the kit thermistor."],
+["r47","b","4.7K ohm resistor","1",2,"Essential","24","Lets the DS18B20 talk to the Arduino."],
+["flow","b","Water flow sensor YF-S201","1",250,"Essential","45","Detects supply starting, or checks the pump for a clogged nozzle."],
+["cup","b","Clear plastic or glass cup","1",40,"Essential","3","Holds the 50 ml milk sample between the LED and the LDR."],
+["sr2","b","Second HC-SR04 ultrasonic sensor","1",60,"Essential","5","A second distance sensor to estimate vehicle speed."],
+["mega","b","Arduino Mega 2560","1",900,"Essential","5","This idea needs about 21 pins, more than a UNO offers."],
+["pump","b","Mini water pump 12V","1",200,"Essential","5","Sprays water on the kerb to settle dust."],
+["adp","b","12V 2A adapter + DC jack","1",350,"Essential","5","Separate power for the pump and motor."],
+["aa","b","AA batteries","4",60,"Essential","5","Power the battery holder."],
+["i2c","b","I2C backpack for LCD1602","1",90,"Recommended","12345","Cuts LCD wiring from 6 pins to 2. Needs soldering."],
+["tube","b","Silicone tube 6 mm, 1 m","1",60,"Recommended","245","Water line and spray nozzle connection."],
+["xb","b","Extra push button","1",5,"Recommended","5","Needs 5 buttons; the kit has 4."],
+["xmf","b","Extra male-to-female jumper wires","1 pack",60,"Recommended","2345","Sensor modules use a lot of them."],
+["bme","b","BME280 sensor","1",250,"Optional","15","More accurate than the DHT11."],
+["esp","b","ESP32 DevKit","1",500,"Optional","1234","Can run a small model on the board itself."],
+["wind","b","Wind sensor","1",800,"Optional","5","Shows which way dust will drift."],
+["sol","b","Solar panel + charge controller + 18650","1 set",700,"Optional","5","Off-grid power for a kerb-side unit."],
+["box","b","Project box, cardboard or acrylic","1",150,"Optional","12345","Mounts and protects the build for the demo."],
+["pms2","b","Second PM2.5 sensor (outdoor)","1",1500,"Essential","1","One PMS5003 reads indoor air and this one reads outside, so the gate can compare them."],
+["bmeI","b","BME280 indoor (temperature, humidity, pressure)","1",250,"Essential","1","Indoor comfort readings and pressure. Set to I2C address 0x76."],
+["bmeO","b","BME280 outdoor","1",250,"Essential","1","Outdoor temperature, humidity and pressure trend. Address 0x77, so both share one I2C bus."],
+["uv","b","UV sensor (GUVA-S12SD)","1",250,"Essential","1","Reads sunlight UV, converted to a UV index in code."],
+["mq","b","MQ-135 gas sensor","1",150,"Essential","1","Indoor air quality: smoke, ammonia and VOC-type gases. Needs a few minutes to warm up."],
+["co2","b","CO₂ sensor (MH-Z19B)","1",2000,"Recommended","1","Indoor CO₂ tells you when a room needs fresh air."],
+["mq7","b","MQ-7 carbon monoxide sensor","1",150,"Optional","1","Adds a carbon monoxide reading for kitchens and garages."],
+["anem","b","Anemometer (wind speed)","1",800,"Recommended","1","Measures outdoor wind speed."],
+["vane","b","Wind vane (wind direction)","1",700,"Recommended","1","Shows where wind and pollution are coming from."],
+["rain","b","Rain sensor module","1",80,"Recommended","15","Detects rain: advice for people at the gate, and the spray lock for Kinara Kavach."],
+["bh","b","BH1750 light sensor","1",100,"Optional","1","Outdoor brightness in lux, for a sunlight and glare reading."],
+["rtc","b","DS3231 real-time clock","1",150,"Recommended","1245","Keeps real time for “measured 12 min ago”, logs and time-of-day rules."],
+["oled","b","0.96 inch OLED (SSD1306, I2C)","1",250,"Recommended","15","Second screen for outdoor readings or the water-saved dashboard."],
+["sd","b","microSD card module + card","1",150,"Recommended","14","Logs readings so you can train and show your model with real data."],
+["adp3","b","5V 3A power adapter","1",300,"Essential","1","Two dust-sensor fans and the gas sensors draw more than a USB port gives."],
+["adp5","b","5V 2A USB adapter","1",200,"Recommended","234","Lets the device run on its own at the demo table."],
+["shield","b","Weatherproof box + sensor shield","1",300,"Recommended","1","Keeps the outdoor sensors dry and out of direct sun."],
+["cable","b","Shielded cable, 5 m","1",100,"Recommended","1","Runs the outdoor sensor set to the indoor board."],
+["dw","b","Distilled water, 1 L","1",30,"Essential","234","Rinses probes between tests and makes diluted samples."],
+["cont","b","Transparent container for probes","1",60,"Essential","24","Lets you test sensors with real water at the demo."],
+["syr","b","50 ml syringe or measuring cup","1",40,"Recommended","3","Pours exactly 50 ml and makes diluted milk samples."],
+["tape","b","Black electrical tape","1",20,"Recommended","3","Blocks room light from the LDR so the light test is stable."],
+["hose","b","Hose connectors, 1/2 inch","2",100,"Recommended","4","Fits the flow sensor into a real water pipe."],
+["lvl","b","Water level sensor","1",60,"Recommended","5","Stops the pump running dry and forecasts when the tank is empty."],
+["nail","b","Two nails or bare wires","1",10,"Recommended","5","Wet-kerb probes: show whether the road is already damp."]
+];
+function up(id,i,v){D.forEach(function(x){if(x[0]==id)x[i]=v})}
+function ap(id,d){up(id,6,D.filter(function(x){return x[0]==id})[0][6]+d)}
+function dp(id,d){up(id,6,D.filter(function(x){return x[0]==id})[0][6].replace(d,""))}
+dp("uno","1");dp("dht","1");dp("bme","1");ap("mega","1");
+up("mega",7,"Many pins: the Air Quality Gate reads 10+ sensors and Kinara Kavach needs about 21 pins.");
+up("sr2",3,"2");up("sr2",4,120);up("sr2",7,"Two extra distance sensors: one for vehicle speed, one for the pedestrian safety stop.");
+up("esp",7,"Alternative to the Mega for the Air Quality Gate: adds Wi-Fi for a phone dashboard. Runs at 3.3V.");
+var P=[
+{n:"Air & Weather Barrier",e:"🚪",s:"A barrier drops as you leave and offers an air check.",t:"When someone heads out, a servo barrier lowers and the LCD asks if they want an air and weather check. A model reads PM2.5, temperature and humidity, then says when to go.",d:"Easy"},
+{n:"Water Cooler Monitor",e:"🚰",s:"Holds the tap shut when the water looks bad.",t:"Sensors in the cooler line track TDS, cloudiness, pH and temperature. A model grades the water, and on red the servo closes the tap until an adult overrides.",d:"Medium"},
+{n:"Milk Tester",e:"🥛",s:"Checks arriving milk for dilution or souring.",t:"Pour 50 ml into the cup and press Start. Sensors read temperature, conductivity, pH and light passing through, and a model says normal, diluted or turning sour. It never says safe.",d:"Medium"},
+{n:"Colony Water Monitor",e:"🏘️",s:"Compares today’s supply with your colony’s normal.",t:"A sensor unit at the supply line tracks TDS, cloudiness, pH and temperature, and flags water that looks doubtful so residents can wait or collect later.",d:"Medium"},
+{n:"Kinara Kavach",e:"🧹",s:"Sprays kerb-side dust only when it is needed.",t:"Distance sensors spot passing vehicles, a PM sensor reads dust, and a model decides whether to skip, spray lightly or spray fully, saving water against a fixed timer.",d:"Hard"}
+];
+P[0].n="Air Quality & Weather Gate";P[0].s="Indoor and outdoor air, UV, wind and pressure at the door.";P[0].d="Hard";
+P[0].t="A gate that checks the room and the street. Inside: PM2.5, CO₂, gases, temperature and humidity. Outside: PM2.5, UV index, pressure trend, wind speed and direction, rain and dew point. A model turns it into an AQI and tells you when to go out.";
+var X=[["#0f766e","Arduino Mega 2560 or ESP32",["Indoor + outdoor PM2.5","CO₂ and gases","UV index","AQI score","Pressure trend","Wind speed + direction","Rain","Dew point","Live clock","Data log"]],["#1d4ed8","Arduino UNO",["TDS","Turbidity","pH","Temperature","Tap hold","Override log"]],["#b45309","Arduino UNO",["Conductivity","pH","Temperature","Light pass","Normal / diluted / sour"]],["#6d28d9","Arduino UNO",["TDS","Turbidity","pH","Flow detect","Colony baseline","Data log"]],["#be123c","Arduino Mega 2560",["Vehicle detect","Dust level","Spray dosing","Wet kerb","Rain lock","Pedestrian stop","Water saved","Tamper alert"]]];
+P.forEach(function(p,i){p.c=X[i][0];p.b=X[i][1];p.f=X[i][2]});
+D.push(["bar","k","LED bar graph","1",0,"","1","AQI meter: the worse the air, the more bars light up."],["s595","k","74HC595 shift register","2",0,"","1","Drives the bar-graph LEDs with only 3 Arduino pins, which is how the UNO has enough pins."]);
+ap("uno","1");dp("mega","1");dp("esp","1");
+["pms2","bmeI","bh","co2","mq","mq7","oled","sd","rtc","adp3","red","yel","grn","buz"].forEach(function(i){dp(i,"1")});
+ap("adp5","1");ap("ldr","1");
+up("ldr",7,"Measures sunlight brightness (Air Gate), light through milk, or ambient light.");
+up("bmeO",2,"BME280 (temperature, humidity, pressure)");
+up("bmeO",7,"Outdoor temperature, humidity and pressure trend. Dew point is calculated from it.");
+up("mega",7,"Kinara Kavach needs about 21 pins, more than a UNO has.");
+P[0].n="Outdoor Air & Weather Gate";P[0].s="Outdoor air, UV, wind and pressure as you head out.";P[0].d="Medium";
+P[0].t="Someone walks to the door, a servo barrier drops, and the LCD offers an outdoor check. A PM2.5 sensor, UV sensor, BME280 and wind sensors feed a model that gives an AQI, shown on an LED bar meter, plus the best time to go out.";
+var PIN=[12,6,5,5,21];P[0].b="Arduino UNO R3";P[0].f=["PM2.5 + AQI","UV index","Pressure trend","Wind speed","Wind direction","Rain","Dew point","Sunlight (LDR)","LED bar AQI meter","Best time to go out"];
+var TL=["Pick an idea. Check your parts.","Your kit already does more than you think.","Count first. Buy second.","Build the demo, not the shopping cart.","Test every sensor at home, not at the hackathon."];
+var TIPS=["Test each sensor alone on the Serial Monitor before wiring the next one.","Wire buttons with INPUT_PULLUP so they need no extra resistors.","Label every wire group with tape. Debugging is easier.","Average 10 readings. A single sensor reading is noisy.","Never power a motor or pump from the Arduino 5V pin.","Save each sketch version with the date in its name.","Log real readings for the model. Judges like measured data.","Practise the two-minute demo twice before judging starts."];
+var O={Essential:0,Recommended:1,Optional:2};
+var q="";function qf(x){return !q||(x[2]+" "+x[7]).toLowerCase().indexOf(q)>-1}
+var cur=0,filt="All",KEY="bench-ticks-v1",ticks={};
+try{ticks=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){ticks={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(ticks))}catch(e){}}
+function inr(n){return "₹"+n.toLocaleString("en-IN")}
+function mine(type){return D.filter(function(x){return x[1]==type&&x[6].indexOf(String(cur+1))>-1})}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function row(x,buy){
+ var done=!!ticks[x[0]];
+ var side=buy?'<div class="side"><strong>'+inr(x[4])+'</strong>'+esc(x[3])+'<br><span class="chip '+x[5]+'">'+x[5]+'</span></div>':'<div class="side"><strong>×'+esc(x[3])+'</strong>in kit</div>';
+ return '<label class="it'+(done?' done':'')+'"><input type="checkbox" data-id="'+x[0]+'"'+(done?' checked':'')+'><div><h3>'+esc(x[2])+'</h3><p>'+esc(x[7])+'</p></div>'+side+'</label>';
+}
+function render(){
+ var p=P[cur];document.body.style.setProperty("--acc",p.c);
+ document.querySelectorAll(".idea").forEach(function(b,i){b.setAttribute("aria-pressed",i==cur)});
+ var kit=mine("k"),buy=mine("b").sort(function(a,b){return O[a[5]]-O[b[5]]});
+ var kd=kit.filter(function(x){return ticks[x[0]]}).length;
+ var bd=buy.filter(function(x){return ticks[x[0]]}).length;
+ var tot=kit.length+buy.length,dn=kd+bd;
+ var need=buy.filter(function(x){return x[5]!="Optional"});
+ var left=need.filter(function(x){return !ticks[x[0]]}).reduce(function(a,x){return a+x[4]},0);
+ document.getElementById("brief").innerHTML='<div><h2>'+p.e+' '+esc(p.n)+'</h2><p class="tag">'+esc(p.t)+'</p><div class="chips">'+p.f.map(function(f){return '<span>'+esc(f)+'</span>'}).join('')+'</div></div><div class="meter"><div class="row"><span>Board</span><span class="diff">'+esc(p.b)+'</span></div><div class="row"><span>Digital pins</span><span>'+PIN[cur]+' of '+(/Mega/.test(p.b)?52:12)+'</span></div><div class="pinbar"><i style="width:'+Math.min(100,Math.round(PIN[cur]/(/Mega/.test(p.b)?52:12)*100))+'%"></i></div><div class="row"><span>Difficulty</span><span class="diff">'+p.d+'</span></div><div class="row"><span>Parts in kit</span><span>'+kit.length+'</span></div><div class="row"><span>Parts to buy</span><span>'+buy.length+'</span></div><div class="row"><span>Still to spend (essential + recommended)</span><span><b>'+inr(left)+'</b></span></div><div class="bar"><div style="width:'+(tot?Math.round(dn/tot*100):0)+'%"></div></div><small>'+dn+' of '+tot+' parts ticked off'+(kd==kit.length&&need.every(function(x){return ticks[x[0]]})?'. <b>Ready to build.</b>':'')+'</small></div>';
+ document.getElementById("kitCount").textContent=kd+" of "+kit.length+" found";
+ document.getElementById("kitList").innerHTML=kit.filter(qf).map(function(x){return row(x,false)}).join("")||'<div class="empty">No kit part matches your search.</div>';
+ var shown=buy.filter(function(x){return (filt=="All"||x[5]==filt)&&qf(x)});
+ document.getElementById("buyList").innerHTML=shown.length?shown.map(function(x){return row(x,true)}).join(""):'<div class="empty">Nothing in this group for this idea.</div>';
+ document.getElementById("spend").textContent=inr(shown.filter(function(x){return !ticks[x[0]]}).reduce(function(a,x){return a+x[4]},0));
+ var tabs=["All","Essential","Recommended","Optional"];
+ document.getElementById("tabs").innerHTML=tabs.map(function(t){return '<button data-f="'+t+'" aria-pressed="'+(t==filt)+'">'+t+'</button>'}).join("");
+}
+document.getElementById("ideas").innerHTML=P.map(function(p,i){return '<button class="idea" style="--c:'+p.c+'" data-i="'+i+'" aria-pressed="false"><span class="e">'+p.e+'</span><b>'+esc(p.n)+'</b><span>'+esc(p.s)+'</span></button>'}).join("");
+document.addEventListener("click",function(e){
+ var b=e.target.closest(".idea");if(b){cur=+b.dataset.i;render();return}
+ var f=e.target.closest("[data-f]");if(f){filt=f.dataset.f;render()}
+});
+document.addEventListener("change",function(e){
+ var id=e.target.dataset&&e.target.dataset.id;if(!id)return;
+ if(e.target.checked)ticks[id]=1;else delete ticks[id];
+ save();render();
+});
+document.getElementById("reset").addEventListener("click",function(){ticks={};save();render()});
+document.getElementById("q").addEventListener("input",function(e){q=e.target.value.trim().toLowerCase();render()});
+document.getElementById("copy").addEventListener("click",function(e){
+ var b=e.target,t=P[cur].n+" shopping list\n"+mine("b").filter(function(x){return !ticks[x[0]]}).map(function(x){return "- "+x[2]+" ("+x[3]+") "+inr(x[4])}).join("\n");
+ function done(m){b.textContent=m;setTimeout(function(){b.textContent="Copy shopping list"},1800)}
+ try{navigator.clipboard.writeText(t).then(function(){done("Copied")},function(){done("Copy blocked")})}catch(err){done("Copy blocked")}
+});function daily(){var k=D.filter(function(x){return x[1]=="k"}),a=k[Math.floor(Math.random()*k.length)],t=TIPS[Math.floor(Math.random()*TIPS.length)];
+ document.getElementById("daily").innerHTML='<div><b>Kit part to know: '+esc(a[2])+'</b><p>'+esc(a[7])+'</p></div><div><b>Build tip</b><p>'+esc(t)+'</p></div><div class="btns"><button id="again">Show another</button><button id="rnd">Surprise me</button></div>';
+ document.getElementById("again").onclick=daily;
+ document.getElementById("rnd").onclick=function(){cur=Math.floor(Math.random()*5);render();daily();document.getElementById("brief").scrollIntoView({behavior:"smooth"})}}
+document.getElementById("theme").addEventListener("click",function(){var d=document.documentElement,dk=d.dataset.theme?d.dataset.theme=="dark":matchMedia("(prefers-color-scheme: dark)").matches;d.dataset.theme=dk?"light":"dark"});
+cur=Math.floor(Math.random()*5);
+document.querySelector(".hero h1").textContent=TL[Math.floor(Math.random()*TL.length)];
+daily();
+render();
+</script>
+</body>
+</html>
